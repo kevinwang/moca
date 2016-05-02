@@ -1,11 +1,16 @@
-from flask import Flask, redirect, render_template
+from flask import Flask, redirect, render_template, url_for
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 app.debug = True
 
 @app.route('/')
 def home():
     return redirect('/course/textretrieval-001')
+
+@app.route('/coursestest')
+def coursetest():
+    return render_template('specific.html')
+
 
 @app.route('/course/<course_id>')
 def course(course_id):
