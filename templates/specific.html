@@ -27,26 +27,36 @@ path {
 
 <script>
 
+// Function to determine color of topics
+function returnColor(seed){
+    var array = ["yellow", "green", "blue", "purple", "red"];
+    return array[seed];
+}
+
 
 // Set the dimensions of the canvas / graph
-var margin = {top: 30, right: 20, bottom: 50, left: 250},
+var margin = {top: 30, right: 20, bottom: 150, left: 250},
     width = 800 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+    height = 400 - margin.top - margin.bottom;
 
 // Parse the date / time
 var parseDate = d3.time.format("%M:%S").parse;
 
 // Set the ranges
 var x = d3.time.scale().range([0, width]);
+var topic = d3.time.scale().range([0, width]);
 var y = d3.scale.linear().range([height, 0]);
 
 // Define the axes
 var xAxis = d3.svg.axis().scale(x)
-    .orient("bottom").ticks(5)
-    .tickFormat(d3.time.format("%M:%S"));
+    .orient("bottom").ticks(0)
 
 var yAxis = d3.svg.axis().scale(y)
     .orient("left").ticks(5);
+
+var topicAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(5)
+    .tickFormat(d3.time.format("%M:%S"));
 
 // Define the line
 var valueline = d3.svg.line()
@@ -66,12 +76,15 @@ var svg = d3.select("body")
 // Get the data
 d3.csv("data.csv", function(error, data) {
     data.forEach(function(d) {
+        d.num = +d.num;
+        d.topicName = +d.topicName;
         d.date = parseDate(d.date);
         d.close = +d.close;
     });
 
     // Scale the range of the data
     x.domain(d3.extent(data, function(d) { return d.date; }));
+    topic.domain(d3.extent(data, function(d) { return d.date; }));
     y.domain([0, d3.max(data, function(d) { return d.close; })]);
 
     // Add the valueline path.
@@ -93,10 +106,33 @@ d3.csv("data.csv", function(error, data) {
     svg.selectAll("dot")
         .data(data)
       .enter().append("circle")
-        .attr("r", 10)
+        .attr("r", function(d) {return (d.num==0)?0:10;})
         .attr("cx", function(d) { return x(d.date); })
         .attr("cy", function(d) { return y(d.close); })
         .text(function(d) { return "dupe"; });
+
+    // Add the rectangles for topics
+    svg.selectAll("dot")
+        .data(data)
+      .enter().append("rect")
+        .attr("y", height+20)
+        .attr("height", 40)
+        .attr("x", function(d) { return x(d.date); })
+        .attr("width",  function(d) { return width - x(d.date); })
+        .style("fill", function(d) { return returnColor(d.num); })
+        .append("svg:title")
+        .text(function(d) { return d.topicName; });
+
+    // Add topic names
+    svg.selectAll("dot")
+        .data(data)
+      .enter().append("text")
+        .attr("class", "topicName")
+        .attr("text-anchor", "start")
+        .attr("x",function(d) { return x(d.date)+10;} )
+        .attr("y", height + 45)
+        .text(function(d) { return d.topicName;});
+
 
     // Add the X Axis
     svg.append("g")
@@ -104,13 +140,20 @@ d3.csv("data.csv", function(error, data) {
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
 
+    // Add topic axis
+    svg.append("g")
+        .attr("class", "topic axis")
+        .attr("transform", "translate(0," + 300 + ")")
+        .call(topicAxis);
+
+
     // X axis label
     svg.append("text")
     .attr("class", "x label")
-    .attr("text-anchor", "end")
+    .attr("text-anchor", "middle")
     .attr("x", width/2 )
-    .attr("y", height + 40)
-    .text("Time");
+    .attr("y", height + 120)
+    .text("Time (Minutes)");
 
     // Y axis label
     svg.append("text")
@@ -118,12 +161,22 @@ d3.csv("data.csv", function(error, data) {
     .attr("text-anchor", "end")
     .attr("y", height/2)
     .attr("x", -40 )
-    .text("Difficulty");
+    .text("Difficulty (0-100)");
+
+    // Y axis label
+    svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", height+50)
+    .attr("x", -40 )
+    .text("Topic");
 
     // Add the Y Axis
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis);
+
+
 
 });
 
