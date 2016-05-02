@@ -28,9 +28,15 @@ path {
 <script>
 
 // Function to determine color of topics
-function returnColor(seed){
-    var array = ["yellow", "green", "blue", "purple", "red"];
-    return array[seed];
+function returnColor(difficulty){
+    var array = ["blue", "green", "yellow", "orange", "red", "purple"];
+    if (difficulty >= 90){return array[5];}
+    else if (difficulty >= 80){return array[4];}
+    else if (difficulty >= 70){return array[3];}
+    else if (difficulty >= 60){return array[2];}
+    else if (difficulty >= 50){return array[1];}
+    else {return array[0];}
+
 }
 
 
@@ -76,7 +82,6 @@ var svg = d3.select("body")
 // Get the data
 d3.csv("data.csv", function(error, data) {
     data.forEach(function(d) {
-        d.num = +d.num;
         d.topicName = +d.topicName;
         d.date = parseDate(d.date);
         d.close = +d.close;
@@ -119,7 +124,7 @@ d3.csv("data.csv", function(error, data) {
         .attr("height", 40)
         .attr("x", function(d) { return x(d.date); })
         .attr("width",  function(d) { return width - x(d.date); })
-        .style("fill", function(d) { return returnColor(d.num); })
+        .style("fill", function(d) { return returnColor(d.close); })
         .append("svg:title")
         .text(function(d) { return d.topicName; });
 
