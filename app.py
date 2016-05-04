@@ -58,10 +58,13 @@ def route_lecture(course_id, lecture_id):
     s = (select([lecture_metadata.c.id, lecture_metadata.c.title])
          .where(lecture_metadata.c.id == lecture_id)
          .limit(1))
-    lecture = list(connection.execute(s))[0]
+    result = list(connection.execute(s))
     connection.close()
 
-    lecture = {'id': lecture[0], 'title': lecture[1]}
+    if len(result) == 0:
+        abort(404)
+
+    lecture = {'id': result[0][0], 'title': result[0][1]}
     return render_template('lecture.html', lecture=lecture)
 
 if __name__ == '__main__':
