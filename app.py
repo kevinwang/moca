@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, MetaData, Table, select
 
 import heatmaps
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__)
 app.debug = True
 
 course_ids = ['textretrieval', 'textanalytics']
