@@ -13,10 +13,14 @@
     <li>{{ topic }}</li>
     {% endfor %}
 </ul>
-<h2>Videos</h2>
+<h2>Lectures</h2>
 <ul>
-    {% for video in videos %}
-    <li>{{ video }}</li>
+    {% for lecture in lectures %}
+    <li>
+        <a href="/{{ course_id }}/lecture/{{ lecture.id }}">
+            {{ lecture.title }}
+        </a>
+    </li>
     {% endfor %}
 </ul>
 {% endblock %}
