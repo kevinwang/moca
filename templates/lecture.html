@@ -1,4 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
 <h1>{{ lecture.title }}</h1>
+
+<h2>Activity Heatmap (by minute)</h2>
+{% for count in heatmap %}
+{{ '*' * count // 100 }}<br>
+{% endfor %}
 {% endblock %}

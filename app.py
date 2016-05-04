@@ -2,6 +2,8 @@ from flask import Flask, redirect, render_template, abort
 from functools import wraps
 from sqlalchemy import create_engine, MetaData, Table, select
 
+import heatmaps
+
 app = Flask(__name__, static_url_path='')
 app.debug = True
 
@@ -65,7 +67,10 @@ def route_lecture(course_id, lecture_id):
         abort(404)
 
     lecture = {'id': result[0][0], 'title': result[0][1]}
-    return render_template('lecture.html', lecture=lecture)
+    return render_template(
+            'lecture.html',
+            lecture=lecture,
+            heatmap=heatmaps.get_heatmap(course_id, lecture_id))
 
 if __name__ == '__main__':
     app.run()
