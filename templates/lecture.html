@@ -6,4 +6,11 @@
 {% for count in heatmap %}
 {{ '*' * count // 100 }}<br>
 {% endfor %}
+
+<h2>Lecture Video</h2>
+<video controls>
+    <source type="video/webm" src="{{ lecture.video_url_webm }}">
+    <source type="video/mp4" src="{{ lecture.video_url_mp4 }}">
+    <track kind="subtitles" srclang="en" src="{{ lecture.subtitles_url }}" default>
+</video>
 {% endblock %}

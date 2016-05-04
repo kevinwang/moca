@@ -1,7 +1,12 @@
+beautifulsoup4==4.4.1
+cssutils==1.0.1
 Flask==0.10.1
 itsdangerous==0.24
 Jinja2==2.8
+lxml==3.6.0
 MarkupSafe==0.23
 MySQL-python==1.2.5
+pycaption==0.5.5
+requests==2.10.0
 SQLAlchemy==1.0.12
 Werkzeug==0.11.5

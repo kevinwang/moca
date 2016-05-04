@@ -1,5 +1,9 @@
-from flask import Flask, redirect, render_template, abort
+from flask import Flask, redirect, render_template, abort, Response, \
+        stream_with_context
 from functools import wraps
+from pycaption import CaptionConverter, SRTReader, WebVTTWriter, \
+        CaptionReadNoCaptions
+import requests
 from sqlalchemy import create_engine, MetaData, Table, select
 
 from courses import courses
@@ -58,7 +62,7 @@ def route_course(course_id):
 def route_lecture(course_id, lecture_id):
     connection = engines[course_id].connect()
     lecture_metadata = Table('lecture_metadata', metadata[course_id], autoload=True)
-    s = (select([lecture_metadata.c.id, lecture_metadata.c.title])
+    s = (select([lecture_metadata.c.id, lecture_metadata.c.title, lecture_metadata.c.source_video, lecture_metadata.c.video_id])
          .where(lecture_metadata.c.id == lecture_id)
          .limit(1))
     result = list(connection.execute(s))
@@ -67,11 +71,34 @@ def route_lecture(course_id, lecture_id):
     if len(result) == 0:
         abort(404)
 
-    lecture = {'id': result[0][0], 'title': result[0][1]}
+    result = result[0]
+    lecture = {
+        'id': result[0],
+        'title': result[1],
+        'video_url_webm': 'http://d396qusza40orc.cloudfront.net/' + course_id + '/recoded_videos%2F' + result[2].replace('.mp4', '.' + result[3] + '.webm'),
+        'video_url_mp4': 'http://d396qusza40orc.cloudfront.net/' + course_id + '/recoded_videos%2F' + result[2].replace('.mp4', '.' + result[3] + '.mp4'),
+        'subtitles_url': '/%s/lecture/%d/subtitles' % (course_id, lecture_id),
+    }
     return render_template(
             'lecture.html',
+            course_id=course_id,
             lecture=lecture,
             heatmap=heatmaps.get_heatmap(course_id, lecture_id))
+
+@app.route('/<course_id>/lecture/<int:lecture_id>/subtitles')
+@validate_course
+def route_subtitles(course_id, lecture_id):
+    subtitles_url = (
+            'https://class.coursera.org/%s-001/lecture/subtitles?q=%d_en' %
+            (course_id, lecture_id))
+    r = requests.get(subtitles_url)
+    try:
+        converter = CaptionConverter()
+        converter.read(r.text, SRTReader())
+        subtitles = converter.write(WebVTTWriter())
+    except CaptionReadNoCaptions:
+        subtitles = ''
+    return Response(subtitles, content_type='text/vtt')
 
 if __name__ == '__main__':
     app.run()
