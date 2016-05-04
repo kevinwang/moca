@@ -1,9 +1,9 @@
 import json
 
-course_ids = ['textretrieval', 'textanalytics']
+from courses import courses
 
 heatmaps = {}
-for course_id in course_ids:
+for course_id in courses:
     with open('heatmaps/%s-heatmap.json' % course_id) as jsonfile:
         heatmaps[course_id] = json.load(jsonfile)
 

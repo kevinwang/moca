@@ -2,19 +2,19 @@ from flask import Flask, redirect, render_template, abort
 from functools import wraps
 from sqlalchemy import create_engine, MetaData, Table, select
 
+from courses import courses
 import heatmaps
 
 app = Flask(__name__)
 app.debug = True
 
-course_ids = ['textretrieval', 'textanalytics']
-engines = {course_id: create_engine('mysql://root@localhost/' + course_id, echo=True) for course_id in course_ids}
+engines = {course_id: create_engine('mysql://root@localhost/' + course_id, echo=True) for course_id in courses}
 metadata = {course_id: MetaData(engine) for course_id, engine in engines.iteritems()}
 
 def validate_course(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'course_id' in kwargs and kwargs['course_id'] not in course_ids:
+        if 'course_id' in kwargs and kwargs['course_id'] not in courses:
             abort(404)
         return f(*args, **kwargs)
     return decorated_function
@@ -47,6 +47,7 @@ def route_course(course_id):
 
     return render_template(
             'course.html',
+            course_name=courses[course_id],
             course_id=course_id,
             hardest_topics=hardest_topics,
             easiest_topics=easiest_topics,
