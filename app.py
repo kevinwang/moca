@@ -39,7 +39,8 @@ def route_course(course_id):
     lecture_metadata = Table('lecture_metadata', metadata[course_id], autoload=True)
     # TODO: Sort properly by x.y lecture number so 1.10 doesn't come before 1.2
     s = (select([lecture_metadata.c.id, lecture_metadata.c.title])
-         .where((lecture_metadata.c.parent_id == -1) & (lecture_metadata.c.deleted == 0))
+         .where((lecture_metadata.c.parent_id == -1) &
+                (lecture_metadata.c.deleted == 0))
          .order_by(lecture_metadata.c.title))
     result = connection.execute(s)
     connection.close()
@@ -63,7 +64,9 @@ def route_lecture(course_id, lecture_id):
     connection = engines[course_id].connect()
     lecture_metadata = Table('lecture_metadata', metadata[course_id], autoload=True)
     s = (select([lecture_metadata.c.id, lecture_metadata.c.title, lecture_metadata.c.source_video, lecture_metadata.c.video_id])
-         .where(lecture_metadata.c.id == lecture_id)
+         .where((lecture_metadata.c.id == lecture_id) &
+                (lecture_metadata.c.parent_id == -1) &
+                (lecture_metadata.c.deleted == 0))
          .limit(1))
     result = list(connection.execute(s))
     connection.close()
