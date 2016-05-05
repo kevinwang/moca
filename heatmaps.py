@@ -1,10 +1,14 @@
 import json
+import os
 
 from courses import courses
 
+filedir = os.path.dirname(__file__)
+
 heatmaps = {}
 for course_id in courses:
-    with open('heatmaps/%s-heatmap.json' % course_id) as jsonfile:
+    filename = os.path.join(filedir, 'heatmaps/%s-heatmap.json' % course_id)
+    with open(filename) as jsonfile:
         heatmaps[course_id] = json.load(jsonfile)
 
 def get_heatmap(course_id, lecture_id):

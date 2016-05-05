@@ -63,3 +63,4 @@ target/
 
 venv
 .*.swp
+moca.cfg

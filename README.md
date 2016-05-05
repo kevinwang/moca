@@ -18,6 +18,8 @@ Next, set up Python app:
 virtualenv venv
 source venv/bin/activate
 pip install -r requirements.txt
+cp moca.cfg.sample moca.cfg
+vim moca.cfg # Edit accordingly
 ```
 
 Finally, to run the app:

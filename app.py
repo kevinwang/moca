@@ -1,6 +1,8 @@
 from flask import Flask, redirect, render_template, abort, Response, \
         stream_with_context
 from functools import wraps
+import ConfigParser
+import os
 from pycaption import CaptionConverter, SRTReader, WebVTTWriter, \
         CaptionReadNoCaptions
 import requests
@@ -12,7 +14,15 @@ import heatmaps
 app = Flask(__name__)
 app.debug = True
 
-engines = {course_id: create_engine('mysql://root@localhost/' + course_id, echo=True) for course_id in courses}
+config = ConfigParser.RawConfigParser()
+filedir = os.path.dirname(__file__)
+config.read(os.path.join(filedir, 'moca.cfg'))
+
+db_prefix = 'mysql://%s:%s@%s/' % (
+        config.get('Database', 'username'),
+        config.get('Database', 'password'),
+        config.get('Database', 'host'))
+engines = {course_id: create_engine(db_prefix + course_id, echo=True) for course_id in courses}
 metadata = {course_id: MetaData(engine) for course_id, engine in engines.iteritems()}
 
 def validate_course(f):
