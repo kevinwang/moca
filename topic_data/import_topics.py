@@ -47,10 +47,10 @@ for course_id in courses:
 
 topics = {}
 
-with open('topic_TextRetrieval.txt') as f:
+with open(os.path.join(filedir, 'topic_TextRetrieval.txt')) as f:
     topics['textretrieval'] = eval(f.read())
 
-with open('topic_TextAnalytics.txt') as f:
+with open(os.path.join(filedir, 'topic_TextAnalytics.txt')) as f:
     topics['textanalytics'] = eval(f.read())
 
 for course_id in courses:
