@@ -55,18 +55,14 @@ for course_id in courses:
     moca_topic_words[course_id].create(engines[course_id])
     moca_topic_coverage[course_id].create(engines[course_id])
 
-topics = {}
-
-with open(os.path.join(filedir, 'topic_TextRetrieval.txt')) as f:
-    topics['textretrieval'] = eval(f.read())
-
-with open(os.path.join(filedir, 'topic_TextAnalytics.txt')) as f:
-    topics['textanalytics'] = eval(f.read())
-
 for course_id in courses:
     connection = engines[course_id].connect()
 
-    for topic in topics[course_id]:
+    with open(os.path.join(filedir, course_id + '_topics.txt')) as f:
+        topics = eval(f.read())
+
+    # Import topics and word distributions
+    for topic in topics:
         topic_id = int(topic[0])
         words = topic[1].split(' + ')
         words = [word.split('*') for word in words]
@@ -86,11 +82,12 @@ for course_id in courses:
                 phi=word[0])
             connection.execute(word_ins)
 
+    # Import topic coverage by lecture x minute
     with open(os.path.join(filedir, course_id + '_lect_topics.csv')) as f:
         reader = csv.reader(f)
         for row in reader:
             lecture_id = int(row[0])
-            lecture_topics = filter(None, row[1:])
+            lecture_topics = map(int, filter(None, row[1:]))
             for minute, topic_id in enumerate(lecture_topics):
                 cov_ins = moca_topic_coverage[course_id].insert().values(
                     lecture_id=lecture_id,
