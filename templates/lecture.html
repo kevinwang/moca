@@ -4,20 +4,39 @@
 
 <h2>Activity Heatmap (by minute)</h2>
 {% for count in heatmap %}
-{{ '*' * count // 100 }}<br>
+<a href="#" class="seek" data-time-minutes="{{ loop.index - 1 }}" style="text-decoration: none">
+    {{ '*' * count // 100 }}
+</a><br>
 {% endfor %}
 
 <h2>Topics (by minute)</h2>
 <ul>
 {% for topic in coverage %}
-<li>{{ topic.minute }}:00 - {{ topic.name }}</li>
+<li>
+    <a href="#" class="seek" data-time-minutes="{{ topic.minute }}">{{ topic.minute }}:00</a> -
+    <a href="/{{ course_id }}/topic/{{ topic.id }}">{{ topic.name }}</a>
+</li>
 {% endfor %}
 </ul>
 
 <h2>Lecture Video</h2>
-<video controls poster="/static/img/{{ course_id }}.jpg">
+<video id="lecture_video" controls poster="/static/img/{{ course_id }}.jpg">
     <source type="video/webm" src="{{ lecture.video_url_webm }}">
     <source type="video/mp4" src="{{ lecture.video_url_mp4 }}">
     <track kind="subtitles" srclang="en" src="{{ lecture.subtitles_url }}" default>
 </video>
+
+<script>
+// TODO: Move into separate file
+$('.seek').click(function(e) {
+    var seek = $(e.currentTarget);
+    var seekTime = parseInt(seek.attr('data-time-minutes')) * 60;
+
+    var video = $('#lecture_video')[0];
+    video.currentTime = seekTime;
+    video.play();
+
+    return false;
+});
+</script>
 {% endblock %}
