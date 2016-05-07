@@ -7,6 +7,13 @@
 {{ '*' * count // 100 }}<br>
 {% endfor %}
 
+<h2>Topics (by minute)</h2>
+<ul>
+{% for topic in coverage %}
+<li>{{ topic.minute }}:00 - {{ topic.name }}</li>
+{% endfor %}
+</ul>
+
 <h2>Lecture Video</h2>
 <video controls poster="/static/img/{{ course_id }}.jpg">
     <source type="video/webm" src="{{ lecture.video_url_webm }}">

@@ -34,7 +34,8 @@ moca_topic_coverage = {}
 for course_id in courses:
     moca_topics[course_id] = Table('moca_topics', metadata[course_id],
         Column('id', Integer, primary_key=True, autoincrement=False),
-        Column('name', String(100)))
+        Column('name', String(100)),
+        Column('difficulty', Float))
 
     moca_topic_words[course_id] = Table('moca_topic_words', metadata[course_id],
         Column('topic_id', Integer, ForeignKey('moca_topics.id')),
@@ -82,17 +83,35 @@ for course_id in courses:
                 phi=word[0])
             connection.execute(word_ins)
 
-    # Import topic coverage by lecture x minute
+    # Import topic coverage by lecture x minute while simultaneously
+    # calculating topic difficulties
+    topic_num_events = [0] * len(topics)
+    topic_num_minutes = [0] * len(topics)
     with open(os.path.join(filedir, course_id + '_lect_topics.csv')) as f:
         reader = csv.reader(f)
         for row in reader:
             lecture_id = int(row[0])
             lecture_topics = map(int, filter(None, row[1:]))
+            heatmap = heatmaps.get_heatmap(course_id, lecture_id)
             for minute, topic_id in enumerate(lecture_topics):
                 cov_ins = moca_topic_coverage[course_id].insert().values(
                     lecture_id=lecture_id,
                     minute=minute,
                     topic_id=topic_id)
                 connection.execute(cov_ins)
+
+                try:
+                    topic_num_events[topic_id] += heatmap[minute]
+                    topic_num_minutes[topic_id] += 1
+                except IndexError:
+                    continue
+
+    topic_difficulties = [float(e) / m for e, m in zip(topic_num_events, topic_num_minutes)]
+
+    for topic_id, difficulty in enumerate(topic_difficulties):
+        stmt = (moca_topics[course_id].update()
+                .where(moca_topics[course_id].c.id == topic_id)
+                .values(difficulty=difficulty))
+        connection.execute(stmt)
 
     connection.close()
