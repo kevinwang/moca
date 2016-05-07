@@ -2,7 +2,14 @@
 {% block body %}
 <h1>{{ topic.name }}</h1>
 
+<p>Difficulty: {{ topic.difficulty }}</p>
+
 <h2>Word Distribution</h2>
+
+<p>TODO: Make it look like this:</p>
+
+<img src="http://f.kev.wang/i/1mPTl1.png">
+
 <ul>
 {% for word in words %}
 <li>{{ word.word }} (&phi; = {{ word.phi }})</li>
