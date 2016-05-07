@@ -22,6 +22,12 @@ cp moca.cfg.sample moca.cfg
 vim moca.cfg # Edit accordingly
 ```
 
+Run the following to import topic distributions and lecture video topic coverage to SQL:
+
+```bash
+topic_data/import_topics.py
+```
+
 Finally, to run the app:
 
 ```bash

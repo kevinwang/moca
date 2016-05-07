@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>{{ topic.name }}</h1>
+
+<p>Difficulty: {{ topic.difficulty }}</p>
+
+<h2>Word Distribution</h2>
+
+<p>TODO: Make it look like this:</p>
+
+<img src="http://f.kev.wang/i/1mPTl1.png">
+
+<ul>
+{% for word in words %}
+<li>{{ word.word }} (&phi; = {{ word.phi }})</li>
+{% endfor %}
+</ul>
+
+<h2>Lectures</h2>
+<ul>
+    {% for lecture in lectures %}
+    <li>
+        <a href="/{{ course_id }}/lecture/{{ lecture.id }}">
+            {{ lecture.title }} ({{ lecture.num_minutes }} minutes)
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

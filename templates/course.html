@@ -1,16 +1,13 @@
 {% extends "layout.html" %}
 {% block body %}
 <h1>{{ course_name }}</h1>
-<h2>Hardest Topics</h2>
+<h2>Topics</h2>
 <ul>
     {% for topic in hardest_topics %}
-    <li>{{ topic }}</li>
-    {% endfor %}
-</ul>
-<h2>Easiest Topics</h2>
-<ul>
-    {% for topic in easiest_topics %}
-    <li>{{ topic }}</li>
+    <li>
+        <a href="/{{ course_id }}/topic/{{ topic.id }}">
+            {{ topic.name }} (Difficulty: {{ topic.difficulty }})</li>
+        </a>
     {% endfor %}
 </ul>
 <h2>Lectures</h2>
