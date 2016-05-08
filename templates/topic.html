@@ -2,7 +2,7 @@
 {% block body %}
 <h1>Topic: {{ topic.name }}</h1>
 
-<p id="difficulty" font-size=6>Difficulty: {{ topic.difficulty // 100}}</p>
+<p id="difficulty"><font size=6>Difficulty: {{ topic.difficulty}}</font></p>
 
 
 <h1>Word Distribution (Ranked by &phi;)</h1>
@@ -14,13 +14,13 @@ h2 {
 }
 
 .chart {
-  background: #b0e0f8;
+  background: #CCB697;
   margin: 5px;
 }
  
 .chart rect {
   stroke: white;
-  fill: steelblue;
+  fill: #8B6E46;
 }
  
 .chart text {
@@ -46,7 +46,7 @@ h2 {
  
 /* a bit of hovering effect for each bar */
 #step-5 .chart rect:hover {
-  fill: #64707D;
+  fill: #4D351D;
 }
 </style>
 
