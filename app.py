@@ -36,11 +36,19 @@ def validate_course(f):
 
 @app.route('/')
 def route_home():
-    return render_template('home.html')
+    return render_template('animation.html')
 
 @app.route('/coursestest')
 def route_coursetest():
     return render_template('specific.html')
+
+@app.route('/test')
+def test():
+    return render_template('index.html')
+
+@app.route('/animation')
+def animation():
+    return render_template('animation.html')
 
 
 @app.route('/<course_id>')
