@@ -13,7 +13,7 @@
 |10| '0.035-inform + 0.035-user + 0.035-system + 0.026-search + 0.024-filter + 0.021-recommend + 0.020-can + 0.019-use + 0.018-talk + 0.018-engin'| recommender systems |
 |11| '0.025-page + 0.023-index + 0.020-can + 0.015-gener + 0.015-use + 0.015-data + 0.014-exampl + 0.014-queri + 0.014-file + 0.011-t'| indexing|
 |12| '0.053-crawl + 0.024-programm + 0.023-can + 0.022-page + 0.017-task + 0.016-framework + 0.015-new + 0.015-effici + 0.015-mapreduc + 0.013-first'| MapReduce |
-|13| '0.025-mean + 0.019-can + 0.015-high + 0.014-recal + 0.013-natur + 0.013-just + 0.012-precis + 0.012-t + 0.012-languag + 0.012-think'| |
-|14| '0.024-can + 0.023-inform + 0.023-data + 0.020-product + 0.019-system + 0.016-peopl + 0.016-support + 0.016-provid + 0.015-need + 0.014-human'| |
-|15| '0.057-page + 0.023-can + 0.021-link + 0.019-score + 0.016-right + 0.015-probabl + 0.015-two + 0.014-one + 0.012-will + 0.012-author'| |
+|13| '0.025-mean + 0.019-can + 0.015-high + 0.014-recal + 0.013-natur + 0.013-just + 0.012-precis + 0.012-t + 0.012-languag + 0.012-think'| Precision-Recall metrics|
+|14| '0.024-can + 0.023-inform + 0.023-data + 0.020-product + 0.019-system + 0.016-peopl + 0.016-support + 0.016-provid + 0.015-need + 0.014-human'| human-in-the-loop support|
+|15| '0.057-page + 0.023-can + 0.021-link + 0.019-score + 0.016-right + 0.015-probabl + 0.015-two + 0.014-one + 0.012-will + 0.012-author'| PageRank |
 |16| '0.050-valu + 0.047-function + 0.029-will + 0.026-key + 0.023-map + 0.021-word + 0.017-can + 0.016-pair + 0.015-now + 0.013-reduc'| |
