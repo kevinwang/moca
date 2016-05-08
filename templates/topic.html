@@ -24,8 +24,8 @@ $('nav').css('background-color', weakCoffeeMapColor({{ topic.id }}));
 $('nav a').css('color', o > 125 ? 'black' : 'white');
 </script>
 
-<h5 id="difficulty">Difficulty: {{ topic.difficulty }}</h5>
-<p>The difficulty of a topic is the average number of confusion (play/pause/seek) events per minute across lecture video segments which cover the given topic.</p>
+<h5 id="difficulty">Confusion: {{ topic.difficulty }}</h5>
+<p>The confusion of a topic is the average number of confusion (play/pause/seek) events per minute across lecture video segments which cover the given topic.</p>
 
 <h4>Word Distribution (Ranked by &phi;)</h4>
 
