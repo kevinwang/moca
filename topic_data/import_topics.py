@@ -30,6 +30,34 @@ moca_topics = {}
 moca_topic_words = {}
 moca_topic_coverage = {}
 
+# Human-assigned topic names
+rectified_topics = {
+    'textretrieval': {
+        0: 'document relevance',
+        1: 'search engine',
+        2: 'feedback relevance',
+        3: 'user',
+        6: 'natural language',
+        9: 'vector space model',
+        10: 'recommender systems',
+        11: 'indexing',
+        12: 'crawling framework',
+        13: 'precision/recall metrics',
+        14: 'human-in-the-loop support',
+        15: 'PageRank',
+        16: 'MapReduce',
+    },
+    'textanalytics': {
+        0: 'topic model',
+        1: 'information entropy',
+        2: 'retrieval model',
+        3: 'generative',
+        4: 'probabilistic model',
+        7: 'classification',
+        14: 'paradigmatic/syntagmatic relations',
+    },
+}
+
 # Reset `moca_topics` and `moca_topic_words` tables
 for course_id in courses:
     moca_topics[course_id] = Table('moca_topics', metadata[course_id],
@@ -69,10 +97,15 @@ for course_id in courses:
         words = [word.split('*') for word in words]
         words = [(float(word[0]), word[1]) for word in words]
 
+        if topic_id in rectified_topics[course_id]:
+            name = rectified_topics[course_id][topic_id]
+        else:
+            name = ' '.join([words[0][1], words[1][1], words[2][1]])
+
         # Insert topic to `moca_topics`
         topic_ins = moca_topics[course_id].insert().values(
             id=topic_id,
-            name=' '.join([words[0][1], words[1][1], words[2][1]]))
+            name=name)
         connection.execute(topic_ins)
 
         # Insert all words to `moca_topic_words`

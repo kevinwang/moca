@@ -1,2 +1,0 @@
-|LDA Output     | Rectified Topic
-| ------------- |:-------------:|
