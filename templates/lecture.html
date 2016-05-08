@@ -65,18 +65,6 @@ path {
 <script src="http://d3js.org/d3.v3.min.js"></script>
 
 <script>
-
-// Function to determine color of topics
-function returnColorDifficulty(difficulty){
-    var array = ["blue", "green", "yellow", "orange", "red", "purple"];
-    if (difficulty >= 90){return array[5];}
-    else if (difficulty >= 80){return array[4];}
-    else if (difficulty >= 70){return array[3];}
-    else if (difficulty >= 60){return array[2];}
-    else if (difficulty >= 50){return array[1];}
-    else {return array[0];}
-}
-
 function weakCoffeeMapColor(topicId){
     var coffeeArray = ["#644C37","#221116","#B28F4F","#5A352D","#D0906D","#CA944E","#845730","#763F21","#7A2F18","#4E2F07","#61190B","#B8732A", "#ECECD2", "#BA8C62", "#97614C", "#110C0B", "#571914", "#EBC394", "#8E644E" , "#4D3628", "#ECC76F", "#E9DCB2" ];
     return coffeeArray[topicId % coffeeArray.length];
@@ -195,7 +183,6 @@ data = d3.csv.parse(topicString, function(d) {
         .attr("x", function(d) { return x(d.date); })
         .attr("width",  function(d) { return width - x(d.date); })
         .style("fill", function(d) { return weakCoffeeMapColor(d.id); });
-        // returnColor(d.count);
 
     // Add the X Axis
     svg.append("g")

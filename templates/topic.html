@@ -71,28 +71,7 @@ $('nav a').css('color', o > 125 ? 'black' : 'white');
 }
 </style>
 
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script>
-// Function to determine color of topics
-function returnColor(difficulty){
-    var array = ["blue", "green", "yellow", "orange", "red", "purple"];
-    if (difficulty >= 90){return array[5];}
-    else if (difficulty >= 80){return array[4];}
-    else if (difficulty >= 70){return array[3];}
-    else if (difficulty >= 60){return array[2];}
-    else if (difficulty >= 50){return array[1];}
-    else {return array[0];}
-
-}
-
-</script>
-
- <head>
-    <script data-require="jquery@2.0.3" data-semver="2.0.3" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <script data-require="d3@2.10.0" data-semver="2.10.0" src="//cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.js"></script>
-  </head>
-
-  <body>
     <div id="step-5"></div>
     <script>
 
@@ -296,15 +275,7 @@ for(var i = 0; i < narrayy.length;i++){
     .text(String);
  
 }(jQuery));
-$('#difficulty').css("font-color",returnColor({{ topic.difficulty // 100}}));
-                
 </script>
-  </body>
-
-
-
-
-
 
 <h4>Relevant Lectures</h4>
 <ul>
