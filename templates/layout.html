@@ -4,27 +4,28 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
         <title>MOCA: MOOC Course Assistant</title>
         <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+        <link rel="stylesheet" href="/static/css/main.css">
 
     </head>
 
-	<body>
-		<div class="navbar-fixed" >
-		    <nav style="background-color: rgb(217,152,65);">
-		      <div class="nav-wrapper">
-		        <a href="/animation" class="brand-logo">>MOCA: MOOC Course Assistant</a>
-		        <ul class="right hide-on-med-and-down">
-		          <li><a href="/textretrieval">Text Retrieval and Search Engines</a></li>
-		          <li><a href="/textanalytics">Text Mining and Analytics</a></li>
-		        </ul>
-		      </div>
-		    </nav>
-		  </div>
-		{% block body %}{% endblock %}
-	</body>
+    <body>
+        <div class="navbar-fixed" >
+            <nav style="background-color: rgb(217,152,65);">
+                <div class="container">
+                    <div class="nav-wrapper">
+                        <a href="/home" class="brand-logo">MOCA</a>
+                        <ul class="right hide-on-med-and-down">
+                            <li><a href="/textretrieval">Text Retrieval and Search Engines</a></li>
+                            <li><a href="/textanalytics">Text Mining and Analytics</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div class="container">
+            {% block body %}{% endblock %}
+        </div>
+    </body>
 </html>
-
-        
- 
-        	

@@ -5,6 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
 		<link rel="stylesheet" type="text/css" href="static/css/normalize.css" />
 		<link rel="stylesheet" type="text/css" href="static/css/effect2.css" />
+		<link rel="stylesheet" type="text/css" href="static/css/main.css" />
 		<script src="static/js/modernizr.custom.js"></script>
 
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -16,7 +17,7 @@
 
 	</head>
 	<body class="demo-2">
-		<div id="ip-container" class="ip-container" style="text-align:center;">
+		<div id="ip-container" class="ip-container">
 			<!-- initial header -->
 			<header class="ip-header">
 					<br><br><font size="8"></font> <br> <br><br>
@@ -33,22 +34,46 @@
 			</header>
 
 			<!-- main content -->
-			<body>
-				<br><br><font size="8">MOCA: MOOC Course Assistant</font> <br>
-				<font size="6"><u>Courses</u></font> <br>
-				<a href="/textretrieval">
-				    <img src="/static/img/textretrieval.jpg" style="width: 250px;box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);">
-				    <p>Text Retrieval and Search Engines</p>
-				</a>
-
-				<a href="/textanalytics">
-				    <img src="/static/img/textanalytics.jpg" style="width: 250px;box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);">
-				    <p>Text Mining and Analytics</p>
-				</a>
-			</body>
+                        <div class="container">
+                            <div class="home-header">
+                                <h2>MOCA: MOOC Course Assistant</h2>
+                                <h3>Courses</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col m6">
+                                    <a href="/textretrieval" class="course-link">
+                                        <div class="card">
+                                            <div class="card-image">
+                                                <img src="/static/img/textretrieval.jpg">
+                                            </div>
+                                            <div class="card-content">
+                                                <span class="card-title grey-text text-darken-4">Text Retrieval and Search Engines</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col m6">
+                                    <a href="/textanalytics" class="course-link">
+                                        <div class="card">
+                                            <div class="card-image">
+                                                <img src="/static/img/textanalytics.jpg">
+                                            </div>
+                                            <div class="card-content">
+                                                <span class="card-title grey-text text-darken-4">Text Mining and Analytics</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
 		</div><!-- /container -->
 		<script src="static/js/classie.js"></script>
 		<script src="static/js/pathLoader.js"></script>
 		<script src="static/js/main.js"></script>
+                <script>
+$('video').on('ended', function() {
+    history.pushState(null, null, '/home');
+});
+                </script>
 	</body>
 </html>

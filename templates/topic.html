@@ -1,18 +1,13 @@
 {% extends "layout.html" %}
 {% block body %}
-<h1>Topic: {{ topic.name }}</h1>
+<h3>Topic: {{ topic.name }}</h3>
 
-<p id="difficulty"><font size=6>Difficulty: {{ topic.difficulty}}</font></p>
+<h5 id="difficulty">Difficulty: {{ topic.difficulty}}</h5>
 
 
-<h1>Word Distribution (Ranked by &phi;)</h1>
+<h4>Word Distribution (Ranked by &phi;)</h4>
 
-<style>
-h2 {
-  font-size: 1.8em;
-  margin-left: 10px;
-}
-
+<style scoped>
 .chart {
   background: #CCB697;
   margin: 5px;
@@ -85,12 +80,12 @@ jQuery(function($) {
 var arrayx = [];
 var arrayy = [];
 {% for word in words %}
-arrayx.push("{{ word.word }}"); arrayy.push("{{ word.phi}}"); 
+arrayx.push("{{ word.word }}"); arrayy.push("{{ word.phi }}"); 
 {% endfor %}
 
 //combining same phi ones, very sleepy hack
 var dict = {}
-for(var i =0; i<arrayx.length;i++){
+for(var i = 0; i < arrayx.length; i++){
 	if(arrayy[i] in dict){
 		dict[arrayy[i]] = dict[arrayy[i]] + ", " + arrayx[i];
 	}
@@ -285,7 +280,7 @@ $('#difficulty').css("font-color",returnColor({{ topic.difficulty // 100}}));
 
 
 
-<h1>Presence in Lectures</h1>
+<h4>Presence in Lectures</h4>
 <ul>
     {% for lecture in lectures %}
     <li>

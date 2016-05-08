@@ -1,14 +1,56 @@
-{% extends "layout.html" %}
-{% block body %}
-<h1>MOCA: MOOC Course Assistant</h1>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<link rel="stylesheet" type="text/css" href="static/css/normalize.css" />
+		<link rel="stylesheet" type="text/css" href="static/css/effect2.css" />
+		<link rel="stylesheet" type="text/css" href="static/css/main.css" />
+		<script src="static/js/modernizr.custom.js"></script>
 
-<a href="/textretrieval">
-    <img src="/static/img/textretrieval.jpg" style="width: 250px">
-    <p>Text Retrieval and Search Engines</p>
-</a>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <title>MOCA: MOOC Course Assistant</title>
+        <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+  		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+  		<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
 
-<a href="/textanalytics">
-    <img src="/static/img/textanalytics.jpg" style="width: 250px">
-    <p>Text Mining and Analytics</p>
-</a>
-{% endblock %}
+
+	</head>
+	<body class="demo-2">
+		<div id="ip-container" class="ip-container">
+			<!-- main content -->
+                        <div class="container">
+                            <div class="home-header">
+                                <h2>MOCA: MOOC Course Assistant</h2>
+                                <h3>Courses</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col m6">
+                                    <a href="/textretrieval" class="course-link">
+                                        <div class="card">
+                                            <div class="card-image">
+                                                <img src="/static/img/textretrieval.jpg">
+                                            </div>
+                                            <div class="card-content">
+                                                <span class="card-title grey-text text-darken-4">Text Retrieval and Search Engines</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col m6">
+                                    <a href="/textanalytics" class="course-link">
+                                        <div class="card">
+                                            <div class="card-image">
+                                                <img src="/static/img/textanalytics.jpg">
+                                            </div>
+                                            <div class="card-content">
+                                                <span class="card-title grey-text text-darken-4">Text Mining and Analytics</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+		</div><!-- /container -->
+	</body>
+</html>

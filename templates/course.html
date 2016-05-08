@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
-<h1>{{ course_name }}</h1>
-<h2>Topics</h2>
+<h3>{{ course_name }}</h3>
+<h4>Topics</h4>
 <ul>
     {% for topic in hardest_topics %}
     <li>
@@ -10,7 +10,7 @@
         </a>
     {% endfor %}
 </ul>
-<h2>Lectures</h2>
+<h4>Lectures</h4>
 <ul>
     {% for lecture in lectures %}
     <li>

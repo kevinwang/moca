@@ -1,11 +1,25 @@
 {% extends "layout.html" %}
 {% block body %}
-<h1>What are people struggling with?</h1>
+<h3>Lecture: {{ lecture.title }}</h3>
+
+<div id="topic-chips" style="line-height: 2.5em">Topics: </div>
+<script>
+var coverage = JSON.parse('{{ coverage | tojson }}');
+console.log(coverage);
+var topics = {};
+coverage.forEach(function(topic) {
+    if (topic.name in topics) return;
+    $('#topic-chips').append(`<a href="/{{ course_id }}/topic/${topic.id}"><div class="chip">${topic.name}</div></a> `);
+    topics[topic.name] = true;
+});
+</script>
+
+<p>Confusion is measured by the number of times students have paused, resumed, or seeked to a given minute in the lecture video.</p>
+
+<div id="viz" class="viz"></div>
 
 <!--  D3 Graph -->
-<style> /* set the CSS */
-
-body { font: 12px Arial;}
+<style scoped> /* set the CSS */
 
 path { 
     stroke: brown;
@@ -21,22 +35,8 @@ path {
     shape-rendering: crispEdges;
 }
 
-div.tooltip {   
-  position: absolute;           
-  text-align: center;           
-  width: 60px;                  
-  height: 28px;                 
-  padding: 2px;             
-  font: 12px sans-serif;        
-  background: lightsteelblue;   
-  border: 0px;      
-  border-radius: 8px;           
-  pointer-events: none;         
-}
-
 
 </style>
-<body>
 
 <!-- load the d3.js library -->    
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -54,30 +54,18 @@ function returnColorDifficulty(difficulty){
     else {return array[0];}
 }
 
-function weakCoffeeMapColor(string){
+function weakCoffeeMapColor(topicId){
     var coffeeArray = ["#644C37","#221116","#B28F4F","#B28F4F","#5A352D","#D0906D","#CA944E","#845730","#763F21","#7A2F18","#4E2F07","#61190B","#B8732A"];
-    var sum = 0;
-    for(var i=0;i<string.length;i++){
-        sum += string.charCodeAt(i);
-    }
-    return coffeeArray[sum % coffeeArray.length];
+    return coffeeArray[topicId % coffeeArray.length];
 }
 
-
-
-
 // Set the dimensions of the canvas / graph
-var margin = {top: 30, right: 20, bottom: 150, left: 250},
-    width = 800 - margin.left - margin.right,
+var margin = {top: 30, right: 85, bottom: 150, left: 125},
+    width = 850 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
 // Parse the date / time
 var parseDate = d3.time.format("%M:%S").parse;
-
-//For tooltip
-var div = d3.select("body").append("div")   
-    .attr("class", "tooltip")               
-    .style("opacity", 0);
 
 // Set the ranges
 var x = d3.time.scale().range([0, width]);
@@ -102,7 +90,7 @@ var valueline = d3.svg.line()
     .y(function(d) { return y(d.count); });
     
 // Adds the svg canvas
-var svg = d3.select("body")
+var svg = d3.select("#viz")
     .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -116,14 +104,20 @@ var test = "time,topic,count\nclustering,00:00,39\notherwise,01:00,30\n"
 
 var array = [];
 {% for count in heatmap %}
-array.push("{{ count // 100 }}");
+array.push({{ count }});
 {% endfor %}
+
+// Normalize
+var maxDifficulty = Math.max(...array);
+array = array.map(function(d) {
+    return d / maxDifficulty;
+});
 console.log(array);
 
-var topicString = "topic,date,count\n";
+var topicString = "id,topic,date,count\n";
 var counter = 0;
 {% for topic in coverage %}
-topicString = topicString + "{{ topic.name }}" + "," + (( {{ topic.minute }} < 10)?"0":"") + "{{ topic.minute }}" + ":00," + array[counter] + "\n";
+topicString = topicString + "{{ topic.id }}" + "," + "{{ topic.name }}" + "," + (( {{ topic.minute }} < 10)?"0":"") + "{{ topic.minute }}" + ":00," + array[counter] + "\n";
 console.log(topicString);
 
 counter = counter +1;
@@ -131,6 +125,7 @@ counter = counter +1;
 
 data = d3.csv.parse(topicString, function(d) {
     return {
+        id: d.id,
         topic: d.topic,
         date: parseDate(d.date),
         count: +d.count
@@ -157,21 +152,27 @@ data = d3.csv.parse(topicString, function(d) {
         .attr("text-anchor", "middle")  
         .style("font-size", "16px") 
         .style("text-decoration", "underline")  
-        .text("Lesson Difficulty - {{lecture.title}}");
+        .text("{{lecture.title}}");
 
 
     // Add the rectangles for topics
     svg.selectAll("dot")
         .data(data)
-      .enter().append("rect")
+      .enter()
+        .append("svg:a")
+        .attr("xlink:href", "#")
+        .attr("class", "seek tooltipped")
+        .attr("data-time-minutes", function(d, i) { return i; })
+        .attr("data-position", "top")
+        .attr("data-delay", 0)
+        .attr("data-tooltip", function(d) { return d.topic; })
+        .append("rect")
         .attr("y", height+20)
         .attr("height", 40)
         .attr("x", function(d) { return x(d.date); })
         .attr("width",  function(d) { return width - x(d.date); })
-        .style("fill", function(d) { return weakCoffeeMapColor(d.topic); })
+        .style("fill", function(d) { return weakCoffeeMapColor(d.id); });
         // returnColor(d.count);
-        .append("svg:title")
-        .text(function(d) { return d.topic; });
 
     // Add the X Axis
     svg.append("g")
@@ -192,7 +193,7 @@ data = d3.csv.parse(topicString, function(d) {
     .attr("text-anchor", "middle")
     .attr("x", width/2 )
     .attr("y", height + 120)
-    .text("Time (Minutes)");
+    .text("Time (minutes)");
 
     // Y axis label
     svg.append("text")
@@ -200,7 +201,7 @@ data = d3.csv.parse(topicString, function(d) {
     .attr("text-anchor", "end")
     .attr("y", height/2)
     .attr("x", -40 )
-    .text("Difficulty (1/100 scale)");
+    .text("Confusion");
 
     // Y axis label
     svg.append("text")
@@ -215,12 +216,11 @@ data = d3.csv.parse(topicString, function(d) {
         .attr("class", "y axis")
         .call(yAxis);
 </script>
-</body>
-
 
 <!--  -->
 
-<h2>Topics (by minute)</h2>
+{#
+<h4>Topics (by minute)</h4>
 <ul>
 {% for topic in coverage %}
 <li>
@@ -229,8 +229,8 @@ data = d3.csv.parse(topicString, function(d) {
 </li>
 {% endfor %}
 </ul>
+#}
 
-<h2>Lecture Video</h2>
 <video id="lecture_video" controls poster="/static/img/{{ course_id }}.jpg" style="text-align:center;">
     <source type="video/webm" src="{{ lecture.video_url_webm }}">
     <source type="video/mp4" src="{{ lecture.video_url_mp4 }}">
@@ -238,7 +238,6 @@ data = d3.csv.parse(topicString, function(d) {
 </video>
 
 <script>
-// TODO: Move into separate file
 $('.seek').click(function(e) {
     var seek = $(e.currentTarget);
     var seekTime = parseInt(seek.attr('data-time-minutes')) * 60;

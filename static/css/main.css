@@ -1,0 +1,21 @@
+.ip-header {
+    text-align: center;
+}
+
+.home-header {
+    margin-top: 50px;
+    text-align: center;
+}
+
+/*.course-link {*/
+    /*color: #212121;*/
+/*}*/
+
+#lecture_video {
+    width: 100%;
+}
+
+.viz {
+    padding-top: 20px;
+    text-align: center;
+}

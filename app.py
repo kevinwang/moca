@@ -46,9 +46,9 @@ def route_coursetest():
 def test():
     return render_template('index.html')
 
-@app.route('/animation')
+@app.route('/home')
 def animation():
-    return render_template('animation.html')
+    return render_template('home.html')
 
 
 @app.route('/<course_id>')
