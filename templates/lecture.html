@@ -4,12 +4,35 @@
 
 <div id="topic-chips" style="line-height: 2.5em">Topics: </div>
 <script>
+function weakCoffeeMapColor(topicId){
+    var coffeeArray = ["#644C37","#221116","#B28F4F","#5A352D","#D0906D","#CA944E","#845730","#763F21","#7A2F18","#4E2F07","#61190B","#B8732A", "#ECECD2", "#BA8C62", "#97614C", "#110C0B", "#571914", "#EBC394", "#8E644E" , "#4D3628", "#ECC76F", "#E9DCB2" ];
+    return coffeeArray[topicId % coffeeArray.length];
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+for (var i = 0; i < {{ hardest_topics | length }}; i++) {
+    var id = '#topic-' + i;
+    $(id)
+        .css('padding-left', '10px')
+        .css('border-left', '20px solid ' + weakCoffeeMapColor(i));
+}
+
 var coverage = JSON.parse('{{ coverage | tojson }}');
-console.log(coverage);
 var topics = {};
 coverage.forEach(function(topic) {
     if (topic.name in topics) return;
-    $('#topic-chips').append(`<a href="/{{ course_id }}/topic/${topic.id}"><div class="chip">${topic.name}</div></a> `);
+    var color = hexToRgb(weakCoffeeMapColor(topic.id));
+    var o = Math.round(((color.r * 299) + (color.g * 587) + (color.b * 114)) / 1000);
+    var textColor = o > 125 ? 'black' : 'white';
+    $('#topic-chips').append(`<a href="/{{ course_id }}/topic/${topic.id}"><div class="chip" style="background-color: ${weakCoffeeMapColor(topic.id)}; color: ${textColor}">${topic.name}</div></a> `);
     topics[topic.name] = true;
 });
 </script>

@@ -1,15 +1,48 @@
 {% extends "layout.html" %}
 {% block body %}
 <h3>{{ course_name }}</h3>
+
+<style scoped>
+.topic-li {
+    line-height: 1.75em;
+}
+
+.circle {
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    background-color: white;
+}
+</style>
+
 <h4>Topics</h4>
 <ul>
     {% for topic in hardest_topics %}
-    <li>
+    <li class="topic-li">
+        <div class="circle" id="topic-{{ topic.id }}"></div>
         <a href="/{{ course_id }}/topic/{{ topic.id }}">
             {{ topic.name }} (Difficulty: {{ topic.difficulty }})</li>
         </a>
     {% endfor %}
 </ul>
+
+
+<script>
+function weakCoffeeMapColor(topicId){
+    var coffeeArray = ["#644C37","#221116","#B28F4F","#5A352D","#D0906D","#CA944E","#845730","#763F21","#7A2F18","#4E2F07","#61190B","#B8732A", "#ECECD2", "#BA8C62", "#97614C", "#110C0B", "#571914", "#EBC394", "#8E644E" , "#4D3628", "#ECC76F", "#E9DCB2" ];
+    return coffeeArray[topicId % coffeeArray.length];
+}
+
+for (var i = 0; i < {{ hardest_topics | length }}; i++) {
+    var id = '#topic-' + i;
+    $(id).css('background-color', weakCoffeeMapColor(i));
+}
+</script>
+
 <h4>Lectures</h4>
 <ul>
     {% for lecture in lectures %}

@@ -2,6 +2,28 @@
 {% block body %}
 <h3>Topic: {{ topic.name }}</h3>
 
+<script>
+function weakCoffeeMapColor(topicId){
+    var coffeeArray = ["#644C37","#221116","#B28F4F","#5A352D","#D0906D","#CA944E","#845730","#763F21","#7A2F18","#4E2F07","#61190B","#B8732A", "#ECECD2", "#BA8C62", "#97614C", "#110C0B", "#571914", "#EBC394", "#8E644E" , "#4D3628", "#ECC76F", "#E9DCB2" ];
+    return coffeeArray[topicId % coffeeArray.length];
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+var color = hexToRgb(weakCoffeeMapColor({{ topic.id }}));
+var o = Math.round(((color.r * 299) + (color.g * 587) + (color.b * 114)) / 1000);
+
+$('nav').css('background-color', weakCoffeeMapColor({{ topic.id }}));
+$('nav a').css('color', o > 125 ? 'black' : 'white');
+</script>
+
 <h5 id="difficulty">Difficulty: {{ topic.difficulty }}</h5>
 <p>The difficulty of a topic is the average number of confusion (play/pause/seek) events per minute across lecture video segments which cover the given topic.</p>
 
@@ -32,6 +54,10 @@
  
 .chart .rule {
   fill: #000;
+}
+
+#step-5 {
+    text-align: center;
 }
  
 /* removed the while stroke as we don't need it anymore */
@@ -168,7 +194,7 @@ for(var i = 0; i < narrayy.length;i++){
     .text(String);
  
   /* step 4 */
-  var left_width = 300;
+  var left_width = 210;
  
   chart = d3.select($("#step-4")[0])
     .append('svg')
