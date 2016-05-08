@@ -1,13 +1,224 @@
 {% extends "layout.html" %}
 {% block body %}
-<h1>{{ lecture.title }}</h1>
+<h1>What are people struggling with?</h1>
 
-<h2>Activity Heatmap (by minute)</h2>
+<!--  D3 Graph -->
+<style> /* set the CSS */
+
+body { font: 12px Arial;}
+
+path { 
+    stroke: brown;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+div.tooltip {   
+  position: absolute;           
+  text-align: center;           
+  width: 60px;                  
+  height: 28px;                 
+  padding: 2px;             
+  font: 12px sans-serif;        
+  background: lightsteelblue;   
+  border: 0px;      
+  border-radius: 8px;           
+  pointer-events: none;         
+}
+
+
+</style>
+<body>
+
+<!-- load the d3.js library -->    
+<script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script>
+
+// Function to determine color of topics
+function returnColorDifficulty(difficulty){
+    var array = ["blue", "green", "yellow", "orange", "red", "purple"];
+    if (difficulty >= 90){return array[5];}
+    else if (difficulty >= 80){return array[4];}
+    else if (difficulty >= 70){return array[3];}
+    else if (difficulty >= 60){return array[2];}
+    else if (difficulty >= 50){return array[1];}
+    else {return array[0];}
+}
+
+function weakCoffeeMapColor(string){
+    var coffeeArray = ["#644C37","#221116","#B28F4F","#B28F4F","#5A352D","#D0906D","#CA944E","#845730","#763F21","#7A2F18","#4E2F07","#61190B","#B8732A"];
+    var sum = 0;
+    for(var i=0;i<string.length;i++){
+        sum += string.charCodeAt(i);
+    }
+    return coffeeArray[sum % coffeeArray.length];
+}
+
+
+
+
+// Set the dimensions of the canvas / graph
+var margin = {top: 30, right: 20, bottom: 150, left: 250},
+    width = 800 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+// Parse the date / time
+var parseDate = d3.time.format("%M:%S").parse;
+
+//For tooltip
+var div = d3.select("body").append("div")   
+    .attr("class", "tooltip")               
+    .style("opacity", 0);
+
+// Set the ranges
+var x = d3.time.scale().range([0, width]);
+var topic = d3.time.scale().range([0, width]);
+var y = d3.scale.linear().range([height, 0]);
+
+// Define the axes
+var xAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(0);
+
+var yAxis = d3.svg.axis().scale(y)
+    .orient("left").ticks(5);
+
+var topicAxis = d3.svg.axis().scale(x)
+    .orient("bottom").ticks(5)
+    .tickFormat(d3.time.format("%M:%S"));
+
+// Define the line
+var valueline = d3.svg.line()
+    .interpolate("monotone")
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.count); });
+    
+// Adds the svg canvas
+var svg = d3.select("body")
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+        .attr("transform", 
+              "translate(" + margin.left + "," + margin.top + ")");
+
+var string = "topicName,date,close\n"+"clustering,00:00,0\n"+"nonsense,01:00,53.98\n"+"categorization,02:00,99.00\n"+"evaluation,03:00,34.28\n"+"devastation,06:00,63.44\n"+"review,07:00,43.34\n";
+
+var test = "time,topic,count\nclustering,00:00,39\notherwise,01:00,30\n"
+
+var array = [];
 {% for count in heatmap %}
-<a href="#" class="seek" data-time-minutes="{{ loop.index - 1 }}" style="text-decoration: none">
-    {{ '*' * count // 100 }}
-</a><br>
+array.push("{{ count // 100 }}");
 {% endfor %}
+console.log(array);
+
+var topicString = "topic,date,count\n";
+var counter = 0;
+{% for topic in coverage %}
+topicString = topicString + "{{ topic.name }}" + "," + (( {{ topic.minute }} < 10)?"0":"") + "{{ topic.minute }}" + ":00," + array[counter] + "\n";
+console.log(topicString);
+
+counter = counter +1;
+{% endfor %}
+
+data = d3.csv.parse(topicString, function(d) {
+    return {
+        topic: d.topic,
+        date: parseDate(d.date),
+        count: +d.count
+    };    
+});
+
+
+
+    // Scale the range of the data
+    x.domain(d3.extent(data, function(d) { return d.date }));
+    topic.domain(d3.extent(data, function(d) { return d.date; }));
+    y.domain([0, d3.max(data, function(d) { return d.count; })]);
+
+    // Add the valueline path.
+    svg.append("path")
+        .attr("class", "line")
+        .style("stroke-dasharray", ("3, 3"))
+        .attr("d", valueline(data));
+
+    // Add title
+    svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Lesson Difficulty - {{lecture.title}}");
+
+
+    // Add the rectangles for topics
+    svg.selectAll("dot")
+        .data(data)
+      .enter().append("rect")
+        .attr("y", height+20)
+        .attr("height", 40)
+        .attr("x", function(d) { return x(d.date); })
+        .attr("width",  function(d) { return width - x(d.date); })
+        .style("fill", function(d) { return weakCoffeeMapColor(d.topic); })
+        // returnColor(d.count);
+        .append("svg:title")
+        .text(function(d) { return d.topic; });
+
+    // Add the X Axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    // Add topic axis
+    svg.append("g")
+        .attr("class", "topic axis")
+        .attr("transform", "translate(0," + 300 + ")")
+        .call(topicAxis);
+
+
+    // X axis label
+    svg.append("text")
+    .attr("class", "x label")
+    .attr("text-anchor", "middle")
+    .attr("x", width/2 )
+    .attr("y", height + 120)
+    .text("Time (Minutes)");
+
+    // Y axis label
+    svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", height/2)
+    .attr("x", -40 )
+    .text("Difficulty (0-100)");
+
+    // Y axis label
+    svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", height+50)
+    .attr("x", -40 )
+    .text("Topic");
+
+    // Add the Y Axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+</script>
+</body>
+
+
+<!--  -->
 
 <h2>Topics (by minute)</h2>
 <ul>
@@ -20,7 +231,7 @@
 </ul>
 
 <h2>Lecture Video</h2>
-<video id="lecture_video" controls poster="/static/img/{{ course_id }}.jpg">
+<video id="lecture_video" controls poster="/static/img/{{ course_id }}.jpg" style="text-align:center;">
     <source type="video/webm" src="{{ lecture.video_url_webm }}">
     <source type="video/mp4" src="{{ lecture.video_url_mp4 }}">
     <track kind="subtitles" srclang="en" src="{{ lecture.subtitles_url }}" default>

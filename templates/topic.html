@@ -1,22 +1,291 @@
 {% extends "layout.html" %}
 {% block body %}
-<h1>{{ topic.name }}</h1>
+<h1>Topic: {{ topic.name }}</h1>
 
-<p>Difficulty: {{ topic.difficulty }}</p>
+<p id="difficulty" font-size=6>Difficulty: {{ topic.difficulty // 100}}</p>
 
-<h2>Word Distribution</h2>
 
-<p>TODO: Make it look like this:</p>
+<h1>Word Distribution (Ranked by &phi;)</h1>
 
-<img src="http://f.kev.wang/i/1mPTl1.png">
+<style>
+h2 {
+  font-size: 1.8em;
+  margin-left: 10px;
+}
 
-<ul>
+.chart {
+  background: #b0e0f8;
+  margin: 5px;
+}
+ 
+.chart rect {
+  stroke: white;
+  fill: steelblue;
+}
+ 
+.chart text {
+  fill: white;
+}
+ 
+.chart text.name {
+  fill: #000;
+}
+ 
+.chart line {
+  stroke: #c1c1c1;
+}
+ 
+.chart .rule {
+  fill: #000;
+}
+ 
+/* removed the while stroke as we don't need it anymore */
+#step-5 .chart rect {
+  stroke: none;
+}
+ 
+/* a bit of hovering effect for each bar */
+#step-5 .chart rect:hover {
+  fill: #64707D;
+}
+</style>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+// Function to determine color of topics
+function returnColor(difficulty){
+    var array = ["blue", "green", "yellow", "orange", "red", "purple"];
+    if (difficulty >= 90){return array[5];}
+    else if (difficulty >= 80){return array[4];}
+    else if (difficulty >= 70){return array[3];}
+    else if (difficulty >= 60){return array[2];}
+    else if (difficulty >= 50){return array[1];}
+    else {return array[0];}
+
+}
+
+</script>
+
+ <head>
+    <script data-require="jquery@2.0.3" data-semver="2.0.3" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script data-require="d3@2.10.0" data-semver="2.10.0" src="//cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.js"></script>
+  </head>
+
+  <body>
+    <div id="step-5"></div>
+    <script>
+
+// Code goes here
+
+jQuery(function($) {
+
+
+
+
+var arrayx = [];
+var arrayy = [];
 {% for word in words %}
-<li>{{ word.word }} (&phi; = {{ word.phi }})</li>
+arrayx.push("{{ word.word }}"); arrayy.push("{{ word.phi}}"); 
 {% endfor %}
-</ul>
 
-<h2>Lectures</h2>
+//combining same phi ones, very sleepy hack
+var dict = {}
+for(var i =0; i<arrayx.length;i++){
+	if(arrayy[i] in dict){
+		dict[arrayy[i]] = dict[arrayy[i]] + ", " + arrayx[i];
+	}
+	else{
+		dict[arrayy[i]] = arrayx[i];
+	}
+}
+console.log(dict);
+
+var narrayy = Object.keys(dict);
+var narrayx = [];
+for(var i = 0; i < narrayy.length;i++){
+	narrayx.push(dict[narrayy[i]]);
+}
+
+
+
+  var names = narrayx,
+      hotdogs = narrayy,
+      chart,
+      width = 600,
+      bar_height = 25,
+      height = bar_height * names.length;
+ 
+  /* step 1 */
+  chart = d3.select($("#step-1")[0])
+    .append('svg')
+    .attr('class', 'chart')
+    .attr('width', width)
+    .attr('height', height);
+ 
+  /* step 2 */
+  var x, y;
+ 
+  chart = d3.select($("#step-2")[0])
+    .append('svg')
+    .attr('class', 'chart')
+    .attr('width', width)
+    .attr('height', height);
+ 
+  x = d3.scale.linear()
+     .domain([0, d3.max(hotdogs)])
+     .range([0, width]);
+ 
+  y = d3.scale.ordinal()
+    .domain(hotdogs)
+    .rangeBands([0, height]);
+ 
+  chart.selectAll("rect")
+     .data(hotdogs)
+     .enter().append("rect")
+     .attr("x", 0)
+     .attr("y", y)
+     .attr("width", x)
+     .attr("height", bar_height);
+ 
+  /* step 3 */
+  chart = d3.select($("#step-3")[0])
+    .append('svg')
+    .attr('class', 'chart')
+    .attr('width', width)
+    .attr('height', height);
+ 
+  chart.selectAll("rect")
+    .data(hotdogs)
+    .enter().append("rect")
+    .attr("x", 0)
+    .attr("y", y)
+    .attr("width", x)
+    .attr("height", y.rangeBand());
+ 
+  chart.selectAll("text")
+    .data(hotdogs)
+    .enter().append("text")
+    .attr("x", x)
+    .attr("y", function(d){ return y(d) + y.rangeBand()/2; } )
+    .attr("dx", -5)
+    .attr("dy", ".36em")
+    .attr("text-anchor", "end")
+    .text(String);
+ 
+  /* step 4 */
+  var left_width = 300;
+ 
+  chart = d3.select($("#step-4")[0])
+    .append('svg')
+    .attr('class', 'chart')
+    .attr('width', left_width + width)
+    .attr('height', height);
+ 
+  chart.selectAll("rect")
+    .data(hotdogs)
+    .enter().append("rect")
+    .attr("x", left_width)
+    .attr("y", y)
+    .attr("width", x)
+    .attr("height", y.rangeBand());
+ 
+  chart.selectAll("text.score")
+    .data(hotdogs)
+    .enter().append("text")
+    .attr("x", function(d) { return x(d) + left_width; })
+    .attr("y", function(d){ return y(d) + y.rangeBand()/2; } )
+    .attr("dx", -5)
+    .attr("dy", ".36em")
+    .attr("text-anchor", "end")
+    .attr('class', 'score')
+    .text(String);
+ 
+  chart.selectAll("text.name")
+    .data(names)
+    .enter().append("text")
+    .attr("x", left_width / 2)
+    .attr("y", function(d){ console.log(y(d)); return y(d) + y.rangeBand()/2; } )
+    .attr("dy", ".36em")
+    .attr("text-anchor", "middle")
+    .attr('class', 'name')
+    .text(String);
+ 
+  /* step 5 */
+  var gap = 2;
+  // redefine y for adjusting the gap
+  y = d3.scale.ordinal()
+    .domain(hotdogs)
+    .rangeBands([0, (bar_height + 2 * gap) * names.length]);
+ 
+ 
+  chart = d3.select($("#step-5")[0])
+    .append('svg')
+    .attr('class', 'chart')
+    .attr('width', left_width + width + 40)
+    .attr('height', (bar_height + gap * 2) * names.length + 30)
+    .append("g")
+    .attr("transform", "translate(10, 20)");
+ 
+  chart.selectAll("line")
+    .data(x.ticks(d3.max(hotdogs)))
+    .enter().append("line")
+    .attr("x1", function(d) { return x(d) + left_width; })
+    .attr("x2", function(d) { return x(d) + left_width; })
+    .attr("y1", 0)
+    .attr("y2", (bar_height + gap * 2) * names.length);
+ 
+  chart.selectAll(".rule")
+    .data(x.ticks(d3.max(hotdogs)))
+    .enter().append("text")
+    .attr("class", "rule")
+    .attr("x", function(d) { return x(d) + left_width; })
+    .attr("y", 0)
+    .attr("dy", -6)
+    .attr("text-anchor", "middle")
+    .attr("font-size", 10)
+    .text(String);
+ 
+  chart.selectAll("rect")
+    .data(hotdogs)
+    .enter().append("rect")
+    .attr("x", left_width)
+    .attr("y", function(d) { return y(d) + gap; })
+    .attr("width", x)
+    .attr("height", bar_height);
+ 
+  chart.selectAll("text.score")
+    .data(hotdogs)
+    .enter().append("text")
+    .attr("x", function(d) { return x(d) + left_width; })
+    .attr("y", function(d, i){ return y(d) + y.rangeBand()/2; } )
+    .attr("dx", -5)
+    .attr("dy", ".36em")
+    .attr("text-anchor", "end")
+    .attr('class', 'score')
+    .text(String);
+ 
+  chart.selectAll("text.name")
+    .data(names)
+    .enter().append("text")
+    .attr("x", left_width / 2)
+    .attr("y", function(d, i){ return y(d) + y.rangeBand()/2; } )
+    .attr("dy", ".36em")
+    .attr("text-anchor", "middle")
+    .attr('class', 'name')
+    .text(String);
+ 
+}(jQuery));
+$('#difficulty').css("font-color",returnColor({{ topic.difficulty // 100}}));
+                
+</script>
+  </body>
+
+
+
+
+
+
+<h1>Presence in Lectures</h1>
 <ul>
     {% for lecture in lectures %}
     <li>
