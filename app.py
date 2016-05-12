@@ -23,7 +23,7 @@ db_prefix = 'mysql://%s:%s@%s/' % (
         config.get('Database', 'username'),
         config.get('Database', 'password'),
         config.get('Database', 'host'))
-engines = {course_id: create_engine(db_prefix + course_id, echo=True) for course_id in courses}
+engines = {course_id: create_engine(db_prefix + course_id, echo=True, pool_recycle=3600) for course_id in courses}
 metadata = {course_id: MetaData(engine) for course_id, engine in engines.iteritems()}
 
 def validate_course(f):
